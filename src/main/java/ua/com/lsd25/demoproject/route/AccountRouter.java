@@ -17,7 +17,7 @@ public class AccountRouter {
     @Bean
     public RouterFunction<ServerResponse> route(final AccountHandler accountHandler) {
         return RouterFunctions
-                .route(POST("/account/create").and(contentType(APPLICATION_JSON)), accountHandler::createAccount);
+                .route(POST("/accounts").and(contentType(APPLICATION_JSON)), accountHandler::createAccount);
 
     }
 
