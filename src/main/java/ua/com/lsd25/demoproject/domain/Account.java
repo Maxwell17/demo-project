@@ -1,18 +1,24 @@
 package ua.com.lsd25.demoproject.domain;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @Document(collection = "accounts")
 public record Account(@Id String id, String username, String password, List<Role> roles,
                       boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired,
-                      boolean isEnabled) implements UserDetails {
+                      boolean isEnabled) implements UserDetails, Serializable {
+
+    public Account(String username, String password, List<Role> roles, boolean isEnabled) {
+        this(new ObjectId().toString(), username, password, roles, true, true, true, isEnabled);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
