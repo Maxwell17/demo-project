@@ -22,22 +22,17 @@ public class AccountHandler {
     private AccountRepository repository;
 
     public Mono<ServerResponse> createAccount(final ServerRequest request) {
-        return request.bodyToMono(Account.class).log(null, Level.INFO).flatMap(new Function<Account, Mono<Account>>() {
-            @Override
-            public Mono<Account> apply(Account acc) {
-                return repository.save(acc);
-            }
-        }).flatMap(new Function<Account, Mono<ServerResponse>>() {
-            @Override
-            public Mono<ServerResponse> apply(Account acc) {
-                return ServerResponse.created(URI.create("")).contentType(MediaType.APPLICATION_JSON).bodyValue(acc);
-            }
-        }).onErrorResume(new Function<Throwable, Mono<? extends ServerResponse>>() {
-            @Override
-            public Mono<? extends ServerResponse> apply(Throwable th) {
-                return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(th.getMessage());
-            }
-        });
+        return request
+                .bodyToMono(Account.class)
+//                .log(null, Level.INFO)
+                .flatMap((Function<Account, Mono<Account>>) acc -> repository.save(acc))
+                .flatMap((Function<Account, Mono<ServerResponse>>) acc -> ServerResponse.created(URI.create(""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(acc)
+                ).onErrorResume(th -> ServerResponse.badRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(th.getMessage())
+                );
     }
 
 }
