@@ -24,7 +24,16 @@ public class AccountHandler {
     public Mono<ServerResponse> createAccount(final ServerRequest request) {
         return request
                 .bodyToMono(AccountDTO.class)
-                .map(dto -> new Account(dto.username(), dto.password(), dto.roles(), false))
+                .map(dto -> Account.builder()
+                        .username(dto.username())
+                        .password(dto.password())
+                        .roles(dto.roles())
+                        .isAccountNonExpired(true)
+                        .isAccountNonLocked(true)
+                        .isCredentialsNonExpired(true)
+                        .isEnabled(false)
+                        .build()
+                )
 //                .log(null, Level.INFO)
                 .flatMap((Function<Account, Mono<Account>>) acc -> repository.save(acc))
                 .flatMap((Function<Account, Mono<ServerResponse>>) acc -> ServerResponse.created(URI.create(""))

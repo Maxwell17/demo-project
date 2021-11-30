@@ -1,6 +1,7 @@
 package ua.com.lsd25.demoproject.domain;
 
-import org.bson.types.ObjectId;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,14 +12,27 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+@Data
+@Builder
 @Document(collection = "accounts")
-public record Account(@Id String id, String username, String password, List<Role> roles,
-                      boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired,
-                      boolean isEnabled) implements UserDetails, Serializable {
+public final class Account implements UserDetails, Serializable {
 
-    public Account(String username, String password, List<Role> roles, boolean isEnabled) {
-        this(new ObjectId().toString(), username, password, roles, true, true, true, isEnabled);
-    }
+    @Id
+    private String id;
+
+    private String username;
+
+    private String password;
+
+    private List<Role> roles;
+
+    private boolean isAccountNonExpired;
+
+    private boolean isAccountNonLocked;
+
+    private boolean isCredentialsNonExpired;
+
+    private boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
